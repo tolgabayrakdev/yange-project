@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   VStack,
@@ -19,24 +20,168 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  useToast,
 } from "@chakra-ui/react";
 
 export default function Profile() {
   const bgColor = useColorModeValue("gray.50", "gray.700");
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState("John Doe");
-  const [email, setEmail] = useState("john.doe@example.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef<HTMLButtonElement>(null);
+  const toast = useToast();
+  const navigate = useNavigate();
 
-  const handleSave = () => {
-    // Burada API çağrısı yapılabilir
-    setIsEditing(false);
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+
+  const fetchUserInfo = async () => {
+    try {
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/auth/verify", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setName(data.user.username);
+        setEmail(data.user.email);
+      } else {
+        throw new Error("Kullanıcı bilgileri alınamadı");
+      }
+    } catch (error) {
+      console.error("Kullanıcı bilgileri alınırken hata oluştu:", error);
+      toast({
+        title: "Hata",
+        description: "Kullanıcı bilgileri alınamadı.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
-  const handleDeleteAccount = () => {
-    // Burada hesap silme işlemi gerçekleştirilebilir
-    onClose();
+  const handleSave = async () => {
+    try {
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/user/profile', {
+        method: 'PUT',
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: name, email }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Başarılı",
+          description: "Profil bilgileriniz güncellendi.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        setIsEditing(false);
+      } else {
+        throw new Error('Profil güncellenemedi');
+      }
+    } catch (error) {
+      console.error("Profil güncellenirken hata oluştu:", error);
+      toast({
+        title: "Hata",
+        description: "Profil güncellenirken bir hata oluştu.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Hata",
+        description: "Yeni şifreler eşleşmiyor.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/user/change-password', {
+        method: 'PUT',
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Başarılı",
+          description: "Şifreniz başarıyla güncellendi.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Şifre güncellenemedi');
+      }
+    } catch (error: any) {
+      console.error("Şifre güncellenirken hata oluştu:", error);
+      toast({
+        title: "Hata",
+        description: error.message || "Şifre güncellenirken bir hata oluştu.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/user/delete-account', {
+        method: 'DELETE',
+        credentials: "include",
+      });
+
+      if (response.status === 200) {
+        toast({
+          title: "Başarılı",
+          description: "Hesabınız başarıyla silindi.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          navigate('/sign-in');
+        }, 3000);
+      } else {
+        throw new Error('Hesap silinemedi');
+      }
+    } catch (error) {
+      console.error("Hesap silinirken hata oluştu:", error);
+      toast({
+        title: "Hata",
+        description: "Hesap silinirken bir hata oluştu.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      onClose(); // AlertDialog'u kapat
+    }
   };
 
   return (
@@ -78,17 +223,34 @@ export default function Profile() {
           <VStack spacing={3} align="stretch">
             <FormControl>
               <FormLabel fontSize="sm">Mevcut Şifre</FormLabel>
-              <Input type="password" size="sm" />
+              <Input 
+                type="password" 
+                size="sm" 
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
             </FormControl>
             <FormControl>
               <FormLabel fontSize="sm">Yeni Şifre</FormLabel>
-              <Input type="password" size="sm" />
+              <Input 
+                type="password" 
+                size="sm" 
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
             </FormControl>
             <FormControl>
               <FormLabel fontSize="sm">Yeni Şifre (Tekrar)</FormLabel>
-              <Input type="password" size="sm" />
+              <Input 
+                type="password" 
+                size="sm" 
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
             </FormControl>
-            <Button colorScheme="blue" size="sm" width="150px">Şifreyi Güncelle</Button>
+            <Button colorScheme="blue" size="sm" width="150px" onClick={handleChangePassword}>
+              Şifreyi Güncelle
+            </Button>
           </VStack>
         </Box>
 

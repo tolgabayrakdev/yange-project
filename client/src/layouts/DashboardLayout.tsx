@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
     Box,
@@ -23,6 +23,7 @@ import {
     HStack,
     Spacer,
     Avatar,
+    useToast,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { FiHome, FiUser, FiSettings } from "react-icons/fi";
@@ -35,8 +36,9 @@ function DashboardLayout() {
     const navigate = useNavigate();
     const location = useLocation();
     const { colorMode, toggleColorMode } = useColorMode();
-    const userName = "John Doe";
-    const userEmail = "john.doe@example.com";
+    const [userName, setUserName] = useState("");
+    const [userEmail, setUserEmail] = useState("");
+    const toast = useToast();
 
     const bgColor = useColorModeValue("white", "gray.800");
     const borderColor = useColorModeValue("gray.200", "gray.700");
@@ -48,6 +50,38 @@ function DashboardLayout() {
     const logoutHoverBg = useColorModeValue("red.100", "red.700");
 
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/auth/verify", {
+                    method: "POST",
+                    credentials: "include",
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                    
+                    setUserName(data.user.username);
+                    setUserEmail(data.user.email);
+                } else {
+                    throw new Error("Kullanıcı bilgileri alınamadı");
+                }
+            } catch (error) {
+                console.error("Kullanıcı bilgileri alınırken hata oluştu:", error);
+                toast({
+                    title: "Hata",
+                    description: "Kullanıcı bilgileri alınamadı. Lütfen tekrar giriş yapın.",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                });
+                navigate("/sign-in");
+            }
+        };
+
+        fetchUserInfo();
+    }, [navigate, toast]);
 
     const handleLogout = async () => {
         try {
