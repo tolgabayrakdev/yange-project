@@ -1,81 +1,87 @@
-"use client";
+"use client"
 import React from 'react';
-import { TextInput, PasswordInput, Button, Paper, Title, Text, Container, Box } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import Link from 'next/link';
+import { Form, Input, Button, Card, Typography, Row, Col } from 'antd';
+import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
 
-export default function SignUp() {
-    const form = useForm({
-        initialValues: {
-            email: '',
-            username: '',
-            password: '',
-            confirmPassword: '',
-        },
-        validate: {
-            email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Geçersiz e-posta adresi'),
-            username: (value) => (value.length < 3 ? 'Kullanıcı adı en az 3 karakter olmalıdır' : null),
-            password: (value) => (value.length < 6 ? 'Şifre en az 6 karakter olmalıdır' : null),
-            confirmPassword: (value, values) =>
-                value !== values.password ? 'Şifreler eşleşmiyor' : null,
-        },
-    });
+const { Title, Text } = Typography;
 
-    const handleSubmit = (values: typeof form.values) => {
-        // Burada kayıt işlemlerinizi gerçekleştirebilirsiniz
-        console.log('Register attempt with:', values);
-    };
+const SignUp: React.FC = () => {
+  const onFinish = (values: any) => {
+    console.log('Received values of form: ', values);
+  };
 
-    return (
-        <Container size={420} my={40}>
-            <Box ta="center" mb={20}>
-                <Title
-                >
-                    Yeni Hesap Oluştur
-                </Title>
-                <Text c="dimmed" size="sm" mt={5}>
-                    Zaten hesabınız var mı?{' '}
-                    <Text component={Link} href="sign-in" size="sm" c="blue">
-                        Giriş yap
-                    </Text>
-                </Text>
-            </Box>
+  return (
+    <Row justify="center" align="middle" style={{ minHeight: '100vh' }}>
+      <Col xs={22} sm={16} md={12} lg={8} xl={6}>
+        <Card>
+          <Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>Kayıt Ol</Title>
+          <Form
+            name="register"
+            onFinish={onFinish}
+            scrollToFirstError
+          >
+            <Form.Item
+              name="username"
+              rules={[{ required: true, message: 'Lütfen kullanıcı adınızı girin!', whitespace: true }]}
+            >
+              <Input prefix={<UserOutlined />} placeholder="Kullanıcı Adı" />
+            </Form.Item>
 
-            <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-                <form onSubmit={form.onSubmit(handleSubmit)}>
-                    <TextInput
-                        label="Kullanıcı Adı"
-                        placeholder="deneme123"
-                        required
-                        {...form.getInputProps('username')}
-                    />
-                    <TextInput
-                        label="E-posta"
-                        placeholder="ornek@mail.com"
-                        required
-                        mt="md"
-                        {...form.getInputProps('email')}
-                    />
+            <Form.Item
+              name="email"
+              rules={[
+                { required: true, message: 'Lütfen e-posta adresinizi girin!' },
+                { type: 'email', message: 'Geçerli bir e-posta adresi girin!' }
+              ]}
+            >
+              <Input prefix={<MailOutlined />} placeholder="E-posta" />
+            </Form.Item>
 
-                    <PasswordInput
-                        label="Şifre"
-                        placeholder="Şifreniz"
-                        required
-                        mt="md"
-                        {...form.getInputProps('password')}
-                    />
-                    <PasswordInput
-                        label="Şifre Onayı"
-                        placeholder="Şifrenizi tekrar girin"
-                        required
-                        mt="md"
-                        {...form.getInputProps('confirmPassword')}
-                    />
-                    <Button fullWidth mt="xl" type="submit">
-                        Kayıt Ol
-                    </Button>
-                </form>
-            </Paper>
-        </Container>
-    );
-}
+            <Form.Item
+              name="password"
+              rules={[
+                { required: true, message: 'Lütfen şifrenizi girin!' },
+                { min: 6, message: 'Şifre en az 6 karakter olmalıdır!' }
+              ]}
+              hasFeedback
+            >
+              <Input.Password prefix={<LockOutlined />} placeholder="Şifre" />
+            </Form.Item>
+
+            <Form.Item
+              name="confirm"
+              dependencies={['password']}
+              hasFeedback
+              rules={[
+                { required: true, message: 'Lütfen şifrenizi onaylayın!' },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('password') === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('İki şifre eşleşmiyor!'));
+                  },
+                }),
+              ]}
+            >
+              <Input.Password prefix={<LockOutlined />} placeholder="Şifreyi Onayla" />
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+                Kayıt Ol
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Text style={{ display: 'block', textAlign: 'center' }}>
+                Zaten hesabınız var mı? <a href="/sign-in">Giriş yap</a>
+              </Text>
+            </Form.Item>
+          </Form>
+        </Card>
+      </Col>
+    </Row>
+  );
+};
+
+export default SignUp;

@@ -1,71 +1,69 @@
-"use client";
+"use client"
 import React from 'react';
-import { TextInput, PasswordInput, Button, Paper, Title, Text, Container, Box, Checkbox } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import Link from 'next/link';
+import { Form, Input, Button, Checkbox, Card, Typography, Row, Col } from 'antd';
+import { MailOutlined, LockOutlined } from '@ant-design/icons';
 
-export default function SignIn() {
-  const form = useForm({
-    initialValues: {
-      email: '',
-      password: '',
-      rememberMe: false,
-    },
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Geçersiz e-posta adresi'),
-      password: (value) => (value.length < 1 ? 'Şifre gereklidir' : null),
-    },
-  });
+const { Title, Text } = Typography;
 
-  const handleSubmit = (values: typeof form.values) => {
-    // Burada giriş işlemlerinizi gerçekleştirebilirsiniz
-    console.log('Signin attempt with:', values);
+const SignIn: React.FC = () => {
+  const onFinish = (values: any) => {
+    console.log('Received values of form: ', values);
   };
 
   return (
-    <Container size={420} my={40}>
-      <Box ta="center" mb={20}>
-        <Title
-        >
-          Hesabınıza Giriş Yapın
-        </Title>
-        <Text c="dimmed" size="sm" mt={5}>
-          Hesabınız yok mu?{' '}
-          <Text component={Link} href="sign-up" size="sm" c="blue">
-            Hesap oluştur
-          </Text>
-        </Text>
-      </Box>
+    <Row justify="center" align="middle" style={{ minHeight: '100vh' }}>
+      <Col xs={22} sm={16} md={12} lg={8} xl={6}>
+        <Card>
+          <Title level={2} style={{ textAlign: 'center', marginBottom: 24 }}>Giriş Yap</Title>
+          <Form
+            name="normal_login"
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+          >
+            <Form.Item
+              name="email"
+              rules={[
+                { required: true, message: 'Lütfen e-posta adresinizi girin!' },
+                { type: 'email', message: 'Geçerli bir e-posta adresi girin!' }
+              ]}
+            >
+              <Input prefix={<MailOutlined />} placeholder="E-posta" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: 'Lütfen şifrenizi girin!' }]}
+            >
+              <Input
+                prefix={<LockOutlined />}
+                type="password"
+                placeholder="Şifre"
+              />
+            </Form.Item>
+            <Form.Item>
+              <Form.Item name="remember" valuePropName="checked" noStyle>
+                <Checkbox>Beni hatırla</Checkbox>
+              </Form.Item>
 
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <form onSubmit={form.onSubmit(handleSubmit)}>
-          <TextInput
-            label="E-posta"
-            placeholder="ornek@mail.com"
-            required
-            {...form.getInputProps('email')}
-          />
-          <PasswordInput
-            label="Şifre"
-            placeholder="Şifreniz"
-            required
-            mt="md"
-            {...form.getInputProps('password')}
-          />
-          <Box mt="md" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Checkbox
-              label="Beni hatırla"
-              {...form.getInputProps('rememberMe', { type: 'checkbox' })}
-            />
-            <Text component="a" href="#" size="sm" c="blue">
-              Şifremi unuttum
-            </Text>
-          </Box>
-          <Button fullWidth mt="xl" type="submit">
-            Giriş Yap
-          </Button>
-        </form>
-      </Paper>
-    </Container>
+              <a style={{ float: 'right' }} href="/reset-password">
+                Şifremi unuttum
+              </a>
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+                Giriş Yap
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Text style={{ display: 'block', textAlign: 'center' }}>
+                Hesabınız yok mu? <a href="/sign-up">Şimdi kayıt ol!</a>
+              </Text>
+            </Form.Item>
+          </Form>
+        </Card>
+      </Col>
+    </Row>
   );
-}
+};
+
+export default SignIn;

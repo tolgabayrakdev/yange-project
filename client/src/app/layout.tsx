@@ -1,10 +1,7 @@
 "use client";
 import localFont from "next/font/local";
 import "./globals.css";
-
-import '@mantine/core/styles.css';
-
-import { ColorSchemeScript, MantineProvider } from '@mantine/core';
+import { AntdRegistry } from "@ant-design/nextjs-registry";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,13 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <ColorSchemeScript />
-      </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <MantineProvider>
+        <AntdRegistry>
           {children}
-        </MantineProvider>
+        </AntdRegistry>
       </body>
     </html>
   );

@@ -1,13 +1,20 @@
 "use client"
-import { Center, Loader } from '@mantine/core'
 import React from 'react'
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 
-type Props = {}
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-export default function Loading({ }: Props) {
-    return (
-        <Center style={{ width: '100vw', height: '100vh' }}>
-            <Loader size="md" type="dots" color='blue' />
-        </Center>
-    )
+export default function Loading() {
+  return (
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+      width: '100vw',
+    }}>
+      <Spin indicator={antIcon} />
+    </div>
+  )
 }
