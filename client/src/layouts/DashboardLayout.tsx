@@ -24,7 +24,7 @@ import {
     Spacer,
     Avatar,  // Avatar'ı import ediyoruz
 } from "@chakra-ui/react";
-import { HamburgerIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
+import { HamburgerIcon } from "@chakra-ui/icons";
 import { FiHome, FiUser, FiSettings } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
