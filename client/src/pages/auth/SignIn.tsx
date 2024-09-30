@@ -1,5 +1,6 @@
 import { Box, Button, FormControl, FormLabel, Input, VStack, Heading, Text, Link, FormErrorMessage, useToast } from "@chakra-ui/react";
 import { Formik, Form, Field, FieldProps } from "formik";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
 const SignInSchema = Yup.object().shape({
@@ -8,6 +9,7 @@ const SignInSchema = Yup.object().shape({
 });
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const toast = useToast();
 
   return (
@@ -17,15 +19,16 @@ export default function SignIn() {
         validationSchema={SignInSchema}
         onSubmit={async (values, actions) => {
           try {
-            const response = await fetch('http://localhost:8000/api/auth/login', {
+            const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/auth/login', {
               method: 'POST',
+              credentials: "include",
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify(values),
             });
 
-            if (response.ok) {
+            if (response.status === 200) {
               toast({
                 title: "Giriş başarılı",
                 description: "Hoş geldiniz!",
@@ -33,8 +36,7 @@ export default function SignIn() {
                 duration: 3000,
                 isClosable: true,
               });
-              // Burada kullanıcıyı ana sayfaya yönlendirebilirsiniz
-              // Örneğin: window.location.href = '/dashboard';
+              setTimeout(() => navigate('/dashboard'), 500);
             } else {
               throw new Error('Giriş başarısız');
             }
@@ -55,7 +57,7 @@ export default function SignIn() {
           <Form>
             <VStack spacing={3} align="stretch">
               <Heading as="h1" size="lg" textAlign="center">Giriş Yap</Heading>
-              
+
               <Field name="email">
                 {({ field }: FieldProps) => (
                   <FormControl isInvalid={!!(errors.email && touched.email)}>

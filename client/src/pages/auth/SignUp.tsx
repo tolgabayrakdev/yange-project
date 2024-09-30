@@ -1,5 +1,6 @@
 import { Box, Button, FormControl, FormLabel, Input, VStack, Heading, Text, Link, FormErrorMessage, useToast } from "@chakra-ui/react";
 import { Formik, Form, Field, FieldProps } from "formik";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
 const SignUpSchema = Yup.object().shape({
@@ -12,6 +13,7 @@ const SignUpSchema = Yup.object().shape({
 });
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const toast = useToast();
 
   return (
@@ -21,8 +23,9 @@ export default function SignUp() {
         validationSchema={SignUpSchema}
         onSubmit={async (values, actions) => {
           try {
-            const response = await fetch('http://localhost:8000/api/auth/register', {
+            const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/auth/register', {
               method: 'POST',
+              credentials: "include",
               headers: {
                 'Content-Type': 'application/json',
               },
@@ -33,7 +36,7 @@ export default function SignUp() {
               }),
             });
 
-            if (response.ok) {
+            if (response.status === 201) {
               toast({
                 title: "Kayıt başarılı",
                 description: "Hesabınız oluşturuldu. Giriş yapabilirsiniz.",
@@ -41,8 +44,7 @@ export default function SignUp() {
                 duration: 3000,
                 isClosable: true,
               });
-              // Burada kullanıcıyı giriş sayfasına yönlendirebilirsiniz
-              // Örneğin: window.location.href = '/sign-in';
+              setTimeout(() => navigate('/sign-in'), 500);
             } else {
               throw new Error('Kayıt başarısız');
             }
@@ -63,7 +65,7 @@ export default function SignUp() {
           <Form>
             <VStack spacing={3} align="stretch">
               <Heading as="h1" size="lg" textAlign="center">Hesap Oluştur</Heading>
-              
+
               <Field name="username">
                 {({ field }: FieldProps) => (
                   <FormControl isInvalid={!!(errors.username && touched.username)}>
