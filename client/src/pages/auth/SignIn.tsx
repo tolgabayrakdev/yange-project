@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormLabel, Input, VStack, Heading, Text, Link, FormErrorMessage } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, VStack, Heading, Text, Link, FormErrorMessage, useToast } from "@chakra-ui/react";
 import { Formik, Form, Field, FieldProps } from "formik";
 import * as Yup from "yup";
 
@@ -8,18 +8,50 @@ const SignInSchema = Yup.object().shape({
 });
 
 export default function SignIn() {
+  const toast = useToast();
+
   return (
     <Box maxWidth="350px" margin="auto" mt={6}>
       <Formik
         initialValues={{ email: "", password: "" }}
         validationSchema={SignInSchema}
-        onSubmit={(values, actions) => {
-          console.log(values);
-          // Burada giriş işlemini gerçekleştirebilirsiniz
-          actions.setSubmitting(false);
+        onSubmit={async (values, actions) => {
+          try {
+            const response = await fetch('http://localhost:8000/api/auth/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(values),
+            });
+
+            if (response.ok) {
+              toast({
+                title: "Giriş başarılı",
+                description: "Hoş geldiniz!",
+                status: "success",
+                duration: 3000,
+                isClosable: true,
+              });
+              // Burada kullanıcıyı ana sayfaya yönlendirebilirsiniz
+              // Örneğin: window.location.href = '/dashboard';
+            } else {
+              throw new Error('Giriş başarısız');
+            }
+          } catch (error) {
+            toast({
+              title: "Giriş başarısız",
+              description: "E-posta adresinizi veya parolanızı kontrol ediniz.",
+              status: "warning",
+              duration: 3000,
+              isClosable: true,
+            });
+          } finally {
+            actions.setSubmitting(false);
+          }
         }}
       >
-        {({ errors, touched }) => (
+        {({ errors, touched, isSubmitting }) => (
           <Form>
             <VStack spacing={3} align="stretch">
               <Heading as="h1" size="lg" textAlign="center">Giriş Yap</Heading>
@@ -44,7 +76,7 @@ export default function SignIn() {
                 )}
               </Field>
 
-              <Button type="submit" colorScheme="blue" size="sm">
+              <Button type="submit" colorScheme="blue" size="sm" isLoading={isSubmitting}>
                 Giriş Yap
               </Button>
 
