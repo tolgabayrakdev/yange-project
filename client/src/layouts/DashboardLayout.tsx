@@ -42,7 +42,7 @@ export default function DashboardLayout() {
     const activeNavBg = useColorModeValue("blue.50", "blue.900");
     const activeNavColor = useColorModeValue("blue.500", "blue.200");
 
-    const logoutColor = useColorModeValue("red.500", "red.300");
+    const logoutColor = useColorModeValue("red.500", "red.100");
     const logoutHoverBg = useColorModeValue("red.100", "red.700");
 
     const handleLogout = () => {
@@ -87,7 +87,7 @@ export default function DashboardLayout() {
                 borderRight="1px"
                 borderColor={borderColor}
             >
-                <VStack align="stretch" p={3} spacing={6} flex={1}>
+                <VStack align="stretch" p={3} mt={3} spacing={6} flex={1}>
                     <Box textAlign="center" width="100%">
                         <Heading size="md" color={textColor}>Dashboard</Heading>
                     </Box>
@@ -140,7 +140,7 @@ export default function DashboardLayout() {
                 </Box>
 
                 {/* Page content */}
-                <Box flex={1} p={4} overflowY="auto" bg={bgColor} color={textColor}>
+                <Box flex={1} p={6} overflowY="auto" bg={bgColor} color={textColor}>
                     <Outlet />
                 </Box>
             </Flex>
