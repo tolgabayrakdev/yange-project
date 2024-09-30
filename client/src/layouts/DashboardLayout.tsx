@@ -22,14 +22,15 @@ import {
     useColorModeValue,
     HStack,
     Spacer,
-    Avatar,  // Avatar'ı import ediyoruz
+    Avatar,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { FiHome, FiUser, FiSettings } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Loading from "../components/Loading";
+import AuthWrapper from "../wrappers/AuthWrapper";
 
-export default function DashboardLayout() {
+function DashboardLayout() {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const navigate = useNavigate();
     const location = useLocation();
@@ -216,3 +217,5 @@ export default function DashboardLayout() {
         </Flex>
     );
 }
+
+export default AuthWrapper(DashboardLayout);
