@@ -22,7 +22,7 @@ async def login(payload: LoginUser, response: Response, db: Session = Depends(ge
     return {"message": "Login is successful."}
 
 
-@router.post("/register")
+@router.post("/register", status_code=201)
 async def register(payload: RegisterUser, db: Session = Depends(get_db)):
     return AuthenticationService.register(payload, db)
 
