@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import {
     Box,
@@ -27,6 +27,7 @@ import {
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { FiHome, FiUser, FiSettings } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import Loading from "../components/Loading";
 
 export default function DashboardLayout() {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -45,8 +46,25 @@ export default function DashboardLayout() {
     const logoutColor = useColorModeValue("red.500", "red.100");
     const logoutHoverBg = useColorModeValue("red.100", "red.700");
 
-    const handleLogout = () => {
-        navigate("/login");
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+    const handleLogout = async () => {
+        try {
+            setIsLoggingOut(true);
+            const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/auth/logout", {
+                method: "POST",
+                credentials: "include",
+            });
+            if (response.status === 200) {
+                setTimeout(() => {
+                    setIsLoggingOut(false);
+                    navigate("/sign-in");
+                }, 500);
+            }
+        } catch (error) {
+            setIsLoggingOut(false);
+            // Hata yönetimi burada yapılabilir
+        }
     };
 
     const NavItem = ({ to, children, icon }: { to: string; children: React.ReactNode; icon: React.ReactElement }) => (
@@ -75,6 +93,12 @@ export default function DashboardLayout() {
             <NavItem to="/dashboard/settings" icon={<FiSettings />}>Settings</NavItem>
         </VStack>
     );
+
+    if (isLoggingOut) {
+        return (
+            <Loading />
+        );
+    }
 
     return (
         <Flex h="100vh" bg={bgColor}>
@@ -113,8 +137,8 @@ export default function DashboardLayout() {
                                     {colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}
                                 </MenuItem>
                                 <MenuItem onClick={() => navigate("/settings")}>Ayarlar</MenuItem>
-                                <MenuItem 
-                                    onClick={handleLogout} 
+                                <MenuItem
+                                    onClick={handleLogout}
                                     color={logoutColor}
                                     _hover={{ bg: logoutHoverBg }}
                                 >
@@ -175,8 +199,8 @@ export default function DashboardLayout() {
                                             {colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}
                                         </MenuItem>
                                         <MenuItem onClick={() => navigate("/settings")}>Ayarlar</MenuItem>
-                                        <MenuItem 
-                                            onClick={handleLogout} 
+                                        <MenuItem
+                                            onClick={handleLogout}
                                             color={logoutColor}
                                             _hover={{ bg: logoutHoverBg }}
                                         >
