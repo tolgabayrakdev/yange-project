@@ -24,12 +24,16 @@ import {
     Spacer,
     Avatar,
     useToast,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { FiHome, FiUser, FiSettings } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Loading from "../components/Loading";
 import AuthWrapper from "../wrappers/AuthWrapper";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 
 function DashboardLayout() {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -129,6 +133,35 @@ function DashboardLayout() {
         </VStack>
     );
 
+    const getBreadcrumbs = () => {
+        const pathnames = location.pathname.split("/").filter((x) => x);
+        return pathnames.map((name, index) => {
+            // Dashboard'ı her zaman atlıyoruz çünkü zaten sabit olarak ekliyoruz
+            if (name.toLowerCase() === 'dashboard') {
+                return null;
+            }
+            const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
+            const isLast = index === pathnames.length - 1;
+            return (
+                <BreadcrumbItem key={name} isCurrentPage={isLast}>
+                    <BreadcrumbLink 
+                        as={NavLink} 
+                        to={routeTo} 
+                        color={isLast ? activeNavColor : textColor}
+                        fontSize="sm" 
+                        fontWeight={isLast ? "bold" : "normal"}
+                        _activeLink={{
+                            color: activeNavColor,
+                            fontWeight: "bold"
+                        }}
+                    >
+                        {name.charAt(0).toUpperCase() + name.slice(1)}
+                    </BreadcrumbLink>
+                </BreadcrumbItem>
+            );
+        }).filter(Boolean); // null değerleri filtreliyoruz
+    };
+
     if (isLoggingOut) {
         return (
             <Loading />
@@ -196,6 +229,28 @@ function DashboardLayout() {
                         onClick={onOpen}
                         aria-label="Open menu"
                     />
+                </Box>
+
+                {/* Breadcrumb */}
+                <Box p={4}>
+                    <Breadcrumb spacing="8px" separator={<ChevronRightIcon color="gray.500" />}>
+                        <BreadcrumbItem>
+                            <BreadcrumbLink 
+                                as={NavLink} 
+                                to="/dashboard" 
+                                color={textColor}
+                                fontSize="sm" 
+                                fontWeight={location.pathname === "/dashboard" ? "bold" : "normal"}
+                                _activeLink={{
+                                    color: activeNavColor,
+                                    fontWeight: "bold"
+                                }}
+                            >
+                                Dashboard
+                            </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        {getBreadcrumbs()}
+                    </Breadcrumb>
                 </Box>
 
                 {/* Page content */}
