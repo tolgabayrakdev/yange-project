@@ -64,7 +64,7 @@ export default function Outcome() {
     }
     
     const newOutcome: Outcome = {
-      id: Date.now(), // Geçici ID, normalde backend tarafından sağlanır
+      id: Date.now(),
       type,
       impact,
       notes,
@@ -80,7 +80,6 @@ export default function Outcome() {
       isClosable: true,
     });
 
-    // Form alanlarını sıfırla
     setType('');
     setImpact('');
     setNotes('');

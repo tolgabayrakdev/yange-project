@@ -180,7 +180,7 @@ export default function Profile() {
         isClosable: true,
       });
     } finally {
-      onClose(); // AlertDialog'u kapat
+      onClose();
     }
   };
 
@@ -192,22 +192,22 @@ export default function Profile() {
           <VStack spacing={3} align="stretch">
             <FormControl>
               <FormLabel fontSize="sm">Ad Soyad</FormLabel>
-              <Input 
-                type="text" 
-                value={name} 
+              <Input
+                type="text"
+                value={name}
                 onChange={(e) => setName(e.target.value)}
                 isReadOnly={!isEditing}
-                size="sm" 
+                size="sm"
               />
             </FormControl>
             <FormControl>
               <FormLabel fontSize="sm">E-posta</FormLabel>
-              <Input 
-                type="email" 
-                value={email} 
+              <Input
+                type="email"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 isReadOnly={!isEditing}
-                size="sm" 
+                size="sm"
               />
             </FormControl>
             {isEditing ? (
@@ -223,27 +223,27 @@ export default function Profile() {
           <VStack spacing={3} align="stretch">
             <FormControl>
               <FormLabel fontSize="sm">Mevcut Şifre</FormLabel>
-              <Input 
-                type="password" 
-                size="sm" 
+              <Input
+                type="password"
+                size="sm"
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
               />
             </FormControl>
             <FormControl>
               <FormLabel fontSize="sm">Yeni Şifre</FormLabel>
-              <Input 
-                type="password" 
-                size="sm" 
+              <Input
+                type="password"
+                size="sm"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
             </FormControl>
             <FormControl>
               <FormLabel fontSize="sm">Yeni Şifre (Tekrar)</FormLabel>
-              <Input 
-                type="password" 
-                size="sm" 
+              <Input
+                type="password"
+                size="sm"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
