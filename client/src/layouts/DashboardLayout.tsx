@@ -29,7 +29,7 @@ import {
     BreadcrumbLink,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { FiHome, FiUser, FiSettings } from "react-icons/fi";
+import { FiHome, FiUser, FiSettings, FiClipboard, FiCheckSquare } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Loading from "../components/Loading";
 import AuthWrapper from "../wrappers/AuthWrapper";
@@ -128,6 +128,8 @@ function DashboardLayout() {
     const SidebarContent = () => (
         <VStack align="stretch" spacing={2}>
             <NavItem to="/dashboard" icon={<FiHome />}>Dashboard</NavItem>
+            <NavItem to="/dashboard/decisions" icon={<FiClipboard />}>Decisions</NavItem>
+            <NavItem to="/dashboard/outcomes" icon={<FiCheckSquare />}>Outcomes</NavItem>
             <NavItem to="/dashboard/profile" icon={<FiUser />}>Profile</NavItem>
             <NavItem to="/dashboard/settings" icon={<FiSettings />}>Settings</NavItem>
         </VStack>
