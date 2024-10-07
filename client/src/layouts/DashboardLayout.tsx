@@ -127,21 +127,28 @@ function DashboardLayout() {
 
     const SidebarContent = () => (
         <VStack align="stretch" spacing={2}>
-            <NavItem to="/dashboard" icon={<FiHome />}>Dashboard</NavItem>
-            <NavItem to="/dashboard/profile" icon={<FiUser />}>Profile</NavItem>
-            <NavItem to="/dashboard/settings" icon={<FiSettings />}>Settings</NavItem>
+            <NavItem to="/dashboard" icon={<FiHome />}>Anasayfa</NavItem>
+            <NavItem to="/dashboard/profile" icon={<FiUser />}>Profil</NavItem>
+            <NavItem to="/dashboard/settings" icon={<FiSettings />}>Ayarlar</NavItem>
         </VStack>
     );
 
     const getBreadcrumbs = () => {
         const pathnames = location.pathname.split("/").filter((x) => x);
+        const breadcrumbNames: { [key: string]: string } = {
+            'profile': 'Profil',
+            'settings': 'Ayarlar',
+            // Diğer sayfalar için Türkçe karşılıkları buraya ekleyebilirsiniz
+        };
+
         return pathnames.map((name, index) => {
-            // Dashboard'ı her zaman atlıyoruz çünkü zaten sabit olarak ekliyoruz
             if (name.toLowerCase() === 'dashboard') {
                 return null;
             }
             const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
             const isLast = index === pathnames.length - 1;
+            const displayName = breadcrumbNames[name.toLowerCase()] || name.charAt(0).toUpperCase() + name.slice(1);
+
             return (
                 <BreadcrumbItem key={name} isCurrentPage={isLast}>
                     <BreadcrumbLink 
@@ -155,11 +162,11 @@ function DashboardLayout() {
                             fontWeight: "bold"
                         }}
                     >
-                        {name.charAt(0).toUpperCase() + name.slice(1)}
+                        {displayName}
                     </BreadcrumbLink>
                 </BreadcrumbItem>
             );
-        }).filter(Boolean); // null değerleri filtreliyoruz
+        }).filter(Boolean);
     };
 
     if (isLoggingOut) {
