@@ -1,4 +1,12 @@
-import { Box, Button, Container, Heading, Text, VStack, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Container,
+  Heading,
+  Text,
+  VStack,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
@@ -14,14 +22,16 @@ export default function Home() {
             Hoş Geldiniz
           </Heading>
           <Text fontSize="xl" color={textColor}>
-            Bu uygulama, kullanıcıların kişisel bilgilerini yönetmelerine ve güncellemelerine olanak tanır.
+            Bu uygulama, kullanıcıların kişisel bilgilerini yönetmelerine ve
+            güncellemelerine olanak tanır.
           </Text>
           <Text fontSize="lg" color={textColor}>
-            Güvenli ve kullanıcı dostu arayüzümüz ile hesabınızı kolayca yönetebilirsiniz.
+            Güvenli ve kullanıcı dostu arayüzümüz ile hesabınızı kolayca
+            yönetebilirsiniz.
           </Text>
-          <Button 
-            colorScheme="blue" 
-            size="md" 
+          <Button
+            colorScheme="blue"
+            size="md"
             onClick={() => navigate("/sign-in")}
           >
             Giriş Yap

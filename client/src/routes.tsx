@@ -1,47 +1,47 @@
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
+const HomePage = lazy(() => import("./pages/Home"));
+const SignInPage = lazy(() => import("./pages/auth/SignIn"));
+const SignUpPage = lazy(() => import("./pages/auth/SignUp"));
+const ResetPasswordPage = lazy(() => import("./pages/auth/ResetPassword"));
+const NotFoundPage = lazy(() => import("./pages/error/NotFound"));
 
-const HomePage = lazy(() => import('./pages/Home'));
-const SignInPage = lazy(() => import('./pages/auth/SignIn'));
-const SignUpPage = lazy(() => import('./pages/auth/SignUp'));
-const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPassword'));
-const NotFoundPage = lazy(() => import('./pages/error/NotFound'));
-
-const DashboardLayout = lazy(() => import('./layouts/DashboardLayout'));
-const DashboardIndex = lazy(() => import('./pages/dashboard/Index'));
-const DashboardProfil = lazy(() => import('./pages/dashboard/Profile'));
-
+const DashboardLayout = lazy(() => import("./layouts/DashboardLayout"));
+const DashboardIndex = lazy(() => import("./pages/dashboard/Index"));
+const DashboardProfil = lazy(() => import("./pages/dashboard/Profile"));
+const DasboardFeed = lazy(() => import("./pages/dashboard/Feed"));
 
 const routes = createBrowserRouter([
-    {
-        path: "/",
-        element: <HomePage />
-    },
-    {
-        path: "/sign-in",
-        element: <SignInPage />
-    },
-    {
-        path: "/sign-up",
-        element: <SignUpPage />
-    },
-    {
-        path: "/reset-password",
-        element: <ResetPasswordPage />
-    },
-    {
-        path: "*",
-        element: <NotFoundPage />
-    },
-    {
-        path: "/dashboard",
-        element: <DashboardLayout />,
-        children: [
-            { path: "", element: <DashboardIndex />, index: true },
-            { path: "profile", element: <DashboardProfil /> }
-        ]
-    }
+  {
+    path: "/",
+    element: <HomePage />,
+  },
+  {
+    path: "/sign-in",
+    element: <SignInPage />,
+  },
+  {
+    path: "/sign-up",
+    element: <SignUpPage />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPasswordPage />,
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />,
+  },
+  {
+    path: "/dashboard",
+    element: <DashboardLayout />,
+    children: [
+      { path: "", element: <DashboardIndex />, index: true },
+      { path: "profile", element: <DashboardProfil /> },
+      { path: "feed", element: <DasboardFeed /> },
+    ],
+  },
 ]);
 
 export default routes;
