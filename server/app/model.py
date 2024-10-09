@@ -21,3 +21,16 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.now())
     role_id = Column(Integer, ForeignKey("roles.id"), default=1)
+
+
+class Client(Base):
+    __tablename__ = "clients"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    surname = Column(String)
+    email = Column(String, unique=True, index=True)
+    phone = Column(String, unique=True, index=True)
+    description = Column(String)
+    created_at = Column(DateTime, default=datetime.now())
+    user_id = Column(Integer, ForeignKey("users.id"))

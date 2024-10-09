@@ -29,7 +29,7 @@ import {
   BreadcrumbLink,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { FiHome, FiUser, FiSettings, FiBookmark } from "react-icons/fi";
+import { FiHome, FiUser, FiSettings, FiBookmark, FiChevronDown, FiDollarSign, FiUsers } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Loading from "../components/Loading";
 import AuthWrapper from "../wrappers/AuthWrapper";
@@ -54,6 +54,7 @@ function DashboardLayout() {
   const logoutHoverBg = useColorModeValue("red.100", "red.700");
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isExploreOpen, setIsExploreOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -117,15 +118,24 @@ function DashboardLayout() {
     to,
     children,
     icon,
+    onClick,
+    isSubmenu = false,
   }: {
-    to: string;
+    to?: string;
     children: React.ReactNode;
     icon: React.ReactElement;
+    onClick?: () => void;
+    isSubmenu?: boolean;
   }) => (
-    <NavLink to={to}>
+    <Box
+      as={to ? NavLink : "div"}
+      {...(to ? { to } : {})}
+      onClick={onClick}
+      cursor="pointer"
+    >
       <HStack
         py={1.5}
-        px={3}
+        px={isSubmenu ? 6 : 3}
         borderRadius="md"
         fontSize="sm"
         fontWeight="medium"
@@ -136,8 +146,9 @@ function DashboardLayout() {
       >
         {React.cloneElement(icon, { size: 16 })}
         <Text>{children}</Text>
+        {!to && <FiChevronDown />}
       </HStack>
-    </NavLink>
+    </Box>
   );
 
   const SidebarContent = () => (
@@ -145,9 +156,27 @@ function DashboardLayout() {
       <NavItem to="/dashboard" icon={<FiHome />}>
         Anasayfa
       </NavItem>
-      <NavItem to="/dashboard/feed" icon={<FiBookmark />}>
-        Keşfet
+      <NavItem to="/dashboard/clients" icon={<FiUsers />}>
+        Kişiler(Müşteriler)
       </NavItem>
+      <Box>
+        <NavItem
+          icon={<FiBookmark />}
+          onClick={() => setIsExploreOpen(!isExploreOpen)}
+        >
+          Keşfet
+        </NavItem>
+        {isExploreOpen && (
+          <VStack align="stretch" mt={1} ml={4}>
+            <NavItem to="/dashboard/sales-explore" icon={<FiDollarSign />} isSubmenu>
+              Satış Keşfet
+            </NavItem>
+            <NavItem to="/dashboard/customer-explore" icon={<FiUsers />} isSubmenu>
+              Müşteri Keşfet
+            </NavItem>
+          </VStack>
+        )}
+      </Box>
       <NavItem to="/dashboard/profile" icon={<FiUser />}>
         Profil
       </NavItem>
@@ -163,6 +192,7 @@ function DashboardLayout() {
       profile: "Profil",
       settings: "Ayarlar",
       feed: "Keşfet",
+      clients: "Kişiler",
       // Diğer sayfalar için Türkçe karşılıkları buraya ekleyebilirsiniz
     };
 
