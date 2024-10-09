@@ -13,7 +13,6 @@ const DashboardProfil = lazy(() => import("./pages/dashboard/Profile"));
 const DasboardFeed = lazy(() => import("./pages/dashboard/Feed"));
 const DashboardClients = lazy(() => import("./pages/dashboard/Clients"));
 
-
 const routes = createBrowserRouter([
   {
     path: "/",

@@ -29,7 +29,15 @@ import {
   BreadcrumbLink,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { FiHome, FiUser, FiSettings, FiBookmark, FiChevronDown, FiDollarSign, FiUsers } from "react-icons/fi";
+import {
+  FiHome,
+  FiUser,
+  FiSettings,
+  FiBookmark,
+  FiChevronDown,
+  FiDollarSign,
+  FiUsers,
+} from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Loading from "../components/Loading";
 import AuthWrapper from "../wrappers/AuthWrapper";
@@ -168,10 +176,18 @@ function DashboardLayout() {
         </NavItem>
         {isExploreOpen && (
           <VStack align="stretch" mt={1} ml={4}>
-            <NavItem to="/dashboard/sales-explore" icon={<FiDollarSign />} isSubmenu>
+            <NavItem
+              to="/dashboard/sales-explore"
+              icon={<FiDollarSign />}
+              isSubmenu
+            >
               Satış Keşfet
             </NavItem>
-            <NavItem to="/dashboard/customer-explore" icon={<FiUsers />} isSubmenu>
+            <NavItem
+              to="/dashboard/customer-explore"
+              icon={<FiUsers />}
+              isSubmenu
+            >
               Müşteri Keşfet
             </NavItem>
           </VStack>

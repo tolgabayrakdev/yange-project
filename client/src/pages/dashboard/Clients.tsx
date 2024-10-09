@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Button,
@@ -34,10 +34,19 @@ import {
   useToast,
   Spinner,
   Center,
-} from '@chakra-ui/react';
-import { EditIcon, DeleteIcon, AddIcon, SearchIcon, ChevronLeftIcon, ChevronRightIcon, ViewIcon, DownloadIcon } from '@chakra-ui/icons';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+} from "@chakra-ui/react";
+import {
+  EditIcon,
+  DeleteIcon,
+  AddIcon,
+  SearchIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ViewIcon,
+  DownloadIcon,
+} from "@chakra-ui/icons";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 interface Client {
   id: number;
@@ -51,14 +60,14 @@ interface Client {
 // Telefon numarasını formatlayan yardımcı fonksiyon
 const formatPhoneNumber = (phoneNumber: string): string => {
   // Sadece rakamları al
-  return phoneNumber.replace(/\D/g, '');
+  return phoneNumber.replace(/\D/g, "");
 };
 
 // Telefon numarasını görüntüleme için formatlayan fonksiyon
 const formatPhoneNumberForDisplay = (phoneNumber: string): string => {
   // Sadece rakamları al
-  const digits = phoneNumber.replace(/\D/g, '');
-  
+  const digits = phoneNumber.replace(/\D/g, "");
+
   // 10 haneli ise format uygula
   if (digits.length === 10) {
     return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
@@ -70,7 +79,7 @@ export default function Clients() {
   const [clients, setClients] = useState<Client[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [editingClient, setEditingClient] = useState<Client | null>(null);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
@@ -79,23 +88,27 @@ export default function Clients() {
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [previewClient, setPreviewClient] = useState<Client | null>(null);
-  const { isOpen: isPreviewOpen, onOpen: onPreviewOpen, onClose: onPreviewClose } = useDisclosure();
+  const {
+    isOpen: isPreviewOpen,
+    onOpen: onPreviewOpen,
+    onClose: onPreviewClose,
+  } = useDisclosure();
 
   useEffect(() => {
     const fetchClients = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:8000/api/clients', {
+        const response = await fetch("http://localhost:8000/api/clients", {
           method: "GET",
-          credentials: "include"
+          credentials: "include",
         });
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         const data = await response.json();
         setClients(data);
       } catch (error) {
-        console.error('Error fetching clients:', error);
+        console.error("Error fetching clients:", error);
         toast({
           title: "Müşteri verileri yüklenemedi",
           description: "Lütfen daha sonra tekrar deneyin.",
@@ -129,16 +142,19 @@ export default function Clients() {
   const handleDeleteConfirm = async () => {
     if (clientToDelete !== null) {
       try {
-        const response = await fetch(`http://localhost:8000/api/clients/${clientToDelete}`, {
-          method: 'DELETE',
-          credentials: "include",
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetch(
+          `http://localhost:8000/api/clients/${clientToDelete}`,
+          {
+            method: "DELETE",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
           },
-        });
+        );
 
         if (response.ok) {
-          setClients(clients.filter(client => client.id !== clientToDelete));
+          setClients(clients.filter((client) => client.id !== clientToDelete));
           setIsDeleteAlertOpen(false);
           setClientToDelete(null);
           toast({
@@ -148,10 +164,10 @@ export default function Clients() {
             isClosable: true,
           });
         } else {
-          throw new Error('Silme işlemi başarısız oldu');
+          throw new Error("Silme işlemi başarısız oldu");
         }
       } catch (error) {
-        console.error('Bir hata oluştu:', error);
+        console.error("Bir hata oluştu:", error);
         toast({
           title: "Silme işlemi başarısız oldu",
           description: "Lütfen daha sonra tekrar deneyin.",
@@ -166,17 +182,17 @@ export default function Clients() {
   const fetchClients = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/clients', {
+      const response = await fetch("http://localhost:8000/api/clients", {
         method: "GET",
-        credentials: "include"
+        credentials: "include",
       });
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
       const data = await response.json();
       setClients(data);
     } catch (error) {
-      console.error('Error fetching clients:', error);
+      console.error("Error fetching clients:", error);
       toast({
         title: "Müşteri verileri yüklenemedi",
         description: "Lütfen daha sonra tekrar deneyin.",
@@ -192,9 +208,10 @@ export default function Clients() {
   const handleModalSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const values = Object.fromEntries(formData.entries()) as {[key: string]: string};
+    const values = Object.fromEntries(formData.entries()) as {
+      [key: string]: string;
+    };
 
-    // Validasyon kontrolleri
     if (values.name.length < 3) {
       toast({
         title: "Geçersiz ad",
@@ -249,17 +266,20 @@ export default function Clients() {
       let response;
       if (editingClient) {
         // Düzenleme işlemi
-        response = await fetch(`http://localhost:8000/api/clients/${editingClient.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
+        response = await fetch(
+          `http://localhost:8000/api/clients/${editingClient.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(values),
+            credentials: "include",
           },
-          body: JSON.stringify(values),
-          credentials: 'include',
-        });
+        );
 
         if (!response.ok) {
-          throw new Error('Müşteri güncellenirken bir hata oluştu');
+          throw new Error("Müşteri güncellenirken bir hata oluştu");
         }
 
         toast({
@@ -270,17 +290,17 @@ export default function Clients() {
         });
       } else {
         // Ekleme işlemi
-        response = await fetch('http://localhost:8000/api/clients', {
-          method: 'POST',
+        response = await fetch("http://localhost:8000/api/clients", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(values),
-          credentials: 'include',
+          credentials: "include",
         });
 
         if (!response.ok) {
-          throw new Error('Müşteri eklenirken bir hata oluştu');
+          throw new Error("Müşteri eklenirken bir hata oluştu");
         }
 
         toast({
@@ -290,13 +310,13 @@ export default function Clients() {
           isClosable: true,
         });
       }
-      
+
       // Müşteri listesini yeniden çağır
       await fetchClients();
-      
+
       onClose();
     } catch (error) {
-      console.error('Bir hata oluştu:', error);
+      console.error("Bir hata oluştu:", error);
       toast({
         title: editingClient ? "Müşteri güncellenemedi" : "Müşteri eklenemedi",
         description: "Lütfen daha sonra tekrar deneyin.",
@@ -312,15 +332,15 @@ export default function Clients() {
     setCurrentPage(1); // Arama yapıldığında ilk sayfaya dön
   };
 
-  const filteredClients = clients.filter(client =>
-    Object.values(client).some(val =>
-      val.toString().toLowerCase().includes(searchText.toLowerCase())
-    )
+  const filteredClients = clients.filter((client) =>
+    Object.values(client).some((val) =>
+      val.toString().toLowerCase().includes(searchText.toLowerCase()),
+    ),
   );
 
   const paginatedClients = filteredClients.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const totalPages = Math.ceil(filteredClients.length / itemsPerPage);
@@ -336,31 +356,33 @@ export default function Clients() {
 
   const handleExportPDF = () => {
     const doc: any = new jsPDF();
-    
+
     // Başlık ekle
     doc.setFontSize(18);
-    doc.text('Müsteri Listesi', 14, 22);
-    
+    doc.text("Müsteri Listesi", 14, 22);
+
     // Tablo oluştur
     doc.autoTable({
-      head: [['Ad', 'Soyad', 'E-posta', 'Telefon', 'Aciklama']],
-      body: clients.map(client => [
+      head: [["Ad", "Soyad", "E-posta", "Telefon", "Aciklama"]],
+      body: clients.map((client) => [
         client.name,
         client.surname,
         client.email,
         formatPhoneNumberForDisplay(client.phone),
-        client.description
+        client.description,
       ]),
-      startY: 30
+      startY: 30,
     });
 
     // PDF'i indir
-    doc.save('musteri-listesi.pdf');
+    doc.save("musteri-listesi.pdf");
   };
 
   return (
     <Box>
-      <Text fontSize="xl" fontWeight="bold" mb={3}>Müşteriler</Text>
+      <Text fontSize="xl" fontWeight="bold" mb={3}>
+        Müşteriler
+      </Text>
       <HStack spacing={3} mb={6}>
         <Input
           placeholder="Müşteri ara"
@@ -371,13 +393,23 @@ export default function Clients() {
         <IconButton
           aria-label="Search"
           icon={<SearchIcon />}
-          onClick={() => { }}
+          onClick={() => {}}
           size="sm"
         />
-        <Button leftIcon={<AddIcon />} colorScheme="blue" onClick={handleAdd} size="sm">
+        <Button
+          leftIcon={<AddIcon />}
+          colorScheme="blue"
+          onClick={handleAdd}
+          size="sm"
+        >
           Yeni Ekle
         </Button>
-        <Button leftIcon={<DownloadIcon />} colorScheme="green" onClick={handleExportPDF} size="sm">
+        <Button
+          leftIcon={<DownloadIcon />}
+          colorScheme="green"
+          onClick={handleExportPDF}
+          size="sm"
+        >
           PDF İndir
         </Button>
       </HStack>
@@ -406,7 +438,7 @@ export default function Clients() {
               </Tr>
             </Thead>
             <Tbody>
-              {paginatedClients.map(client => (
+              {paginatedClients.map((client) => (
                 <Tr key={client.id}>
                   <Td>{client.name}</Td>
                   <Td>{client.surname}</Td>
@@ -476,48 +508,50 @@ export default function Clients() {
       <Modal isOpen={isOpen} onClose={onClose} size="md">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader fontSize="lg">{editingClient ? "Müşteri Düzenle" : "Yeni Müşteri Ekle"}</ModalHeader>
+          <ModalHeader fontSize="lg">
+            {editingClient ? "Müşteri Düzenle" : "Yeni Müşteri Ekle"}
+          </ModalHeader>
           <ModalCloseButton />
           <form onSubmit={handleModalSubmit}>
             <ModalBody>
               <VStack spacing={3}>
                 <FormControl isRequired>
                   <FormLabel fontSize="sm">Ad</FormLabel>
-                  <Input 
-                    name="name" 
-                    defaultValue={editingClient?.name} 
-                    size="sm" 
+                  <Input
+                    name="name"
+                    defaultValue={editingClient?.name}
+                    size="sm"
                     minLength={3}
                     title="Ad en az 3 karakter olmalıdır"
                   />
                 </FormControl>
                 <FormControl isRequired>
                   <FormLabel fontSize="sm">Soyad</FormLabel>
-                  <Input 
-                    name="surname" 
-                    defaultValue={editingClient?.surname} 
-                    size="sm" 
+                  <Input
+                    name="surname"
+                    defaultValue={editingClient?.surname}
+                    size="sm"
                     minLength={3}
                     title="Soyad en az 3 karakter olmalıdır"
                   />
                 </FormControl>
                 <FormControl isRequired>
                   <FormLabel fontSize="sm">E-posta</FormLabel>
-                  <Input 
-                    name="email" 
-                    type="email" 
-                    defaultValue={editingClient?.email} 
-                    size="sm" 
+                  <Input
+                    name="email"
+                    type="email"
+                    defaultValue={editingClient?.email}
+                    size="sm"
                     pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                     title="Lütfen geçerli bir e-posta adresi girin"
                   />
                 </FormControl>
                 <FormControl isRequired>
                   <FormLabel fontSize="sm">Telefon</FormLabel>
-                  <Input 
-                    name="phone" 
-                    defaultValue={editingClient?.phone} 
-                    size="sm" 
+                  <Input
+                    name="phone"
+                    defaultValue={editingClient?.phone}
+                    size="sm"
                     placeholder="5XX XXX XXXX"
                     pattern="\d{10}"
                     title="Lütfen 10 haneli bir telefon numarası girin"
@@ -525,7 +559,11 @@ export default function Clients() {
                 </FormControl>
                 <FormControl>
                   <FormLabel fontSize="sm">Açıklama</FormLabel>
-                  <Input name="description" defaultValue={editingClient?.description} size="sm" />
+                  <Input
+                    name="description"
+                    defaultValue={editingClient?.description}
+                    size="sm"
+                  />
                 </FormControl>
               </VStack>
             </ModalBody>
@@ -533,7 +571,9 @@ export default function Clients() {
               <Button colorScheme="blue" mr={3} type="submit" size="sm">
                 Kaydet
               </Button>
-              <Button onClick={onClose} size="sm">İptal</Button>
+              <Button onClick={onClose} size="sm">
+                İptal
+              </Button>
             </ModalFooter>
           </form>
         </ModalContent>
@@ -551,11 +591,15 @@ export default function Clients() {
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Bu işlemi gerçekten yapmak istiyor musunuz? Bu işlem geri alınamaz.
+              Bu işlemi gerçekten yapmak istiyor musunuz? Bu işlem geri
+              alınamaz.
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={() => setIsDeleteAlertOpen(false)}>
+              <Button
+                ref={cancelRef}
+                onClick={() => setIsDeleteAlertOpen(false)}
+              >
                 İptal
               </Button>
               <Button colorScheme="red" onClick={handleDeleteConfirm} ml={3}>
@@ -574,16 +618,29 @@ export default function Clients() {
           <ModalBody>
             {previewClient && (
               <VStack align="start" spacing={3}>
-                <Text><strong>Ad:</strong> {previewClient.name}</Text>
-                <Text><strong>Soyad:</strong> {previewClient.surname}</Text>
-                <Text><strong>E-posta:</strong> {previewClient.email}</Text>
-                <Text><strong>Telefon:</strong> {formatPhoneNumberForDisplay(previewClient.phone)}</Text>
-                <Text><strong>Açıklama:</strong> {previewClient.description}</Text>
+                <Text>
+                  <strong>Ad:</strong> {previewClient.name}
+                </Text>
+                <Text>
+                  <strong>Soyad:</strong> {previewClient.surname}
+                </Text>
+                <Text>
+                  <strong>E-posta:</strong> {previewClient.email}
+                </Text>
+                <Text>
+                  <strong>Telefon:</strong>{" "}
+                  {formatPhoneNumberForDisplay(previewClient.phone)}
+                </Text>
+                <Text>
+                  <strong>Açıklama:</strong> {previewClient.description}
+                </Text>
               </VStack>
             )}
           </ModalBody>
           <ModalFooter>
-            <Button onClick={onPreviewClose} size="sm">Kapat</Button>
+            <Button onClick={onPreviewClose} size="sm">
+              Kapat
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
