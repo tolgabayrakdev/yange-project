@@ -67,7 +67,6 @@ const formatPhoneNumber = (phoneNumber: string): string => {
 const formatPhoneNumberForDisplay = (phoneNumber: string): string => {
   const digits = phoneNumber.replace(/\D/g, "");
 
-  // 10 haneli ise format uygula
   if (digits.length === 10) {
     return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
   }
