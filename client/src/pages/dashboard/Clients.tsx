@@ -65,7 +65,6 @@ const formatPhoneNumber = (phoneNumber: string): string => {
 
 // Telefon numarasını görüntüleme için formatlayan fonksiyon
 const formatPhoneNumberForDisplay = (phoneNumber: string): string => {
-  // Sadece rakamları al
   const digits = phoneNumber.replace(/\D/g, "");
 
   // 10 haneli ise format uygula
