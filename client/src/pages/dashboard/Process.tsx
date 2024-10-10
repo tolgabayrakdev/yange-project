@@ -32,6 +32,12 @@ import {
   HStack,
   CloseButton,
   Link,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from '@chakra-ui/react';
 import { AttachmentIcon, DownloadIcon } from '@chakra-ui/icons';
 
@@ -66,6 +72,9 @@ export default function Process() {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  const [processToDelete, setProcessToDelete] = useState<number | null>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
   const statusMapping = {
     'Başlatıldı': 'started',
@@ -156,9 +165,7 @@ export default function Process() {
         throw new Error('Network response was not ok');
       }
 
-      // İşlem başarılı olduysa, processes state'ini güncelle
       setProcesses(processes.filter(p => p.id !== id));
-
       toast({
         title: 'İşlem silindi.',
         description: 'İşlem başarıyla silindi.',
@@ -175,14 +182,15 @@ export default function Process() {
         duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setIsDeleteAlertOpen(false);
+      setProcessToDelete(null);
     }
   };
 
-  // Silme işlemi için onay almak istiyorsanız, bu fonksiyonu ekleyebilirsiniz
   const confirmDelete = (id: number) => {
-    if (window.confirm('Bu işlemi silmek istediğinizden emin misiniz?')) {
-      handleDeleteProcess(id);
-    }
+    setProcessToDelete(id);
+    setIsDeleteAlertOpen(true);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -448,6 +456,33 @@ export default function Process() {
           </form>
         </ModalContent>
       </Modal>
+
+      <AlertDialog
+        isOpen={isDeleteAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={() => setIsDeleteAlertOpen(false)}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              İşlemi Sil
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Bu işlemi silmek istediğinizden emin misiniz? Bu eylem geri alınamaz.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={() => setIsDeleteAlertOpen(false)}>
+                İptal
+              </Button>
+              <Button colorScheme="red" onClick={() => processToDelete && handleDeleteProcess(processToDelete)} ml={3}>
+                Sil
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 }
