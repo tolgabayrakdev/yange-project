@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   SimpleGrid,
@@ -34,11 +34,9 @@ interface Client {
 
 export default function Index() {
   const [clients, setClients] = useState<Client[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchClients = async () => {
-      setIsLoading(true);
       try {
         const response = await fetch("http://localhost:8000/api/clients", {
           method: "GET",
@@ -51,8 +49,6 @@ export default function Index() {
         setClients(data);
       } catch (error) {
         console.error("Error fetching clients:", error);
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -60,6 +56,7 @@ export default function Index() {
   }, []);
 
   const totalClients = clients.length;
+  // Sadece son 5 müşteriyi al ve ters çevir
   const recentClients = clients.slice(-5).reverse();
 
   // Örnek veri için müşteri dağılımı (gerçek veriye göre düzenlenebilir)
@@ -102,7 +99,7 @@ export default function Index() {
                 fill="#8884d8"
                 dataKey="value"
               >
-                {clientDistributionData.map((entry, index) => (
+                {clientDistributionData.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}
@@ -116,9 +113,9 @@ export default function Index() {
         </Box>
         <Box>
           <Heading as="h2" size="md" mb={4}>
-            Son Eklenen Müşteriler
+            Son Eklenen 5 Müşteri
           </Heading>
-          <Table variant="simple">
+          <Table bg="gray.50" variant="simple">
             <Thead>
               <Tr>
                 <Th>Ad</Th>

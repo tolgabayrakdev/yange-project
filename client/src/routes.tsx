@@ -12,6 +12,7 @@ const DashboardIndex = lazy(() => import("./pages/dashboard/Index"));
 const DashboardProfil = lazy(() => import("./pages/dashboard/Profile"));
 const DasboardFeed = lazy(() => import("./pages/dashboard/Feed"));
 const DashboardClients = lazy(() => import("./pages/dashboard/Clients"));
+const DashboardProcess = lazy(() => import("./pages/dashboard/Process"));
 
 const routes = createBrowserRouter([
   {
@@ -42,6 +43,7 @@ const routes = createBrowserRouter([
       { path: "profile", element: <DashboardProfil /> },
       { path: "feed", element: <DasboardFeed /> },
       { path: "clients", element: <DashboardClients /> },
+      { path: "process", element: <DashboardProcess /> },
     ],
   },
 ]);

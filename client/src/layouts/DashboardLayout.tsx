@@ -33,10 +33,10 @@ import {
   FiHome,
   FiUser,
   FiSettings,
-  FiBookmark,
   FiChevronDown,
-  FiDollarSign,
   FiUsers,
+  FiUserPlus,
+  FiSquare,
 } from "react-icons/fi";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Loading from "../components/Loading";
@@ -165,23 +165,23 @@ function DashboardLayout() {
         Anasayfa
       </NavItem>
       <NavItem to="/dashboard/clients" icon={<FiUsers />}>
-        Kişiler(Müşteriler)
+        Müşteriler
       </NavItem>
       <Box>
         <NavItem
-          icon={<FiBookmark />}
+          icon={<FiUserPlus />}
           onClick={() => setIsExploreOpen(!isExploreOpen)}
         >
-          Keşfet
+          Müşteri İşlemleri
         </NavItem>
         {isExploreOpen && (
           <VStack align="stretch" mt={1} ml={4}>
             <NavItem
-              to="/dashboard/sales-explore"
-              icon={<FiDollarSign />}
+              to="/dashboard/process"
+              icon={<FiSquare />}
               isSubmenu
             >
-              Satış Keşfet
+              İşlem başlat
             </NavItem>
             <NavItem
               to="/dashboard/customer-explore"
@@ -209,6 +209,8 @@ function DashboardLayout() {
       settings: "Ayarlar",
       feed: "Keşfet",
       clients: "Kişiler",
+      customer: "Müşteriler",
+      process: "İşlem Başlat",
       // Diğer sayfalar için Türkçe karşılıkları buraya ekleyebilirsiniz
     };
 

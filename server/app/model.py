@@ -1,7 +1,7 @@
 from .database import Base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Enum
 from datetime import datetime
-
+import enum
 
 class Role(Base):
     __tablename__ = "roles"
@@ -34,3 +34,19 @@ class Client(Base):
     description = Column(String)
     created_at = Column(DateTime, default=datetime.now())
     user_id = Column(Integer, ForeignKey("users.id"))
+
+
+class StatusEnum(enum.Enum):
+    started = "Başlatıldı"
+    in_progress = "Devam Ediyor"
+    completed = "Tamamlandı"
+
+class Process(Base):
+    __tablename__ = "processes"
+
+    id = Column(Integer, primary_key=True)
+    description = Column(String)
+    status = Column(Enum(StatusEnum), default=StatusEnum.started) 
+    created_at = Column(DateTime, default=datetime.now())  
+    file_attachment = Column(String, nullable=True) 
+    client_id = Column(Integer, ForeignKey("clients.id")) 
