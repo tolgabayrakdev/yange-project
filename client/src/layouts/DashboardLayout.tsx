@@ -14,7 +14,6 @@ import {
     Drawer,
     DrawerBody,
     DrawerHeader,
-    DrawerOverlay,
     DrawerContent,
     DrawerCloseButton,
     IconButton,
@@ -54,6 +53,19 @@ function DashboardLayout() {
     const logoutHoverBg = useColorModeValue("red.100", "red.700");
 
     const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
+        if (isMobile) {
+            onClose();
+        }
+    }, [location, isMobile, onClose]);
 
     useEffect(() => {
         const fetchUserInfo = async () => {
@@ -107,7 +119,7 @@ function DashboardLayout() {
     };
 
     const NavItem = ({ to, children, icon }: { to: string; children: React.ReactNode; icon: React.ReactElement }) => (
-        <NavLink to={to}>
+        <NavLink to={to} onClick={isMobile ? onClose : undefined}>
             <HStack
                 py={1.5}
                 px={3}
@@ -260,8 +272,13 @@ function DashboardLayout() {
             </Flex>
 
             {/* Sidebar - mobile */}
-            <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
-                <DrawerOverlay />
+            <Drawer 
+                isOpen={isOpen} 
+                placement="left" 
+                onClose={onClose}
+                blockScrollOnMount={false}
+                trapFocus={false}
+            >
                 <DrawerContent bg={bgColor}>
                     <DrawerCloseButton />
                     <DrawerHeader color={textColor}>Dashboard</DrawerHeader>
