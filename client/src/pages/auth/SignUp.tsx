@@ -4,9 +4,17 @@ import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
 const SignUpSchema = Yup.object().shape({
-  username: Yup.string().required("Kullanıcı adı gereklidir"),
-  email: Yup.string().email("Geçersiz e-posta adresi").required("E-posta adresi gereklidir"),
-  password: Yup.string().min(6, "Şifre en az 6 karakter olmalıdır").required("Şifre gereklidir"),
+  username: Yup.string()
+    .min(3, "Kullanıcı adı en az 3 karakter olmalıdır")
+    .required("Kullanıcı adı gereklidir"),
+  email: Yup.string()
+    .email("Geçersiz e-posta adresi")
+    .required("E-posta adresi gereklidir"),
+  password: Yup.string()
+    .min(6, "Şifre en az 6 karakter olmalıdır")
+    .matches(/[A-Z]/, "Şifre en az bir büyük harf içermelidir")
+    .matches(/\d/, "Şifre en az bir rakam içermelidir")
+    .required("Şifre gereklidir"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('password')], 'Şifreler eşleşmiyor')
     .required("Şifre onayı gereklidir"),
@@ -46,7 +54,29 @@ export default function SignUp() {
               });
               setTimeout(() => navigate('/sign-in'), 500);
             } else {
-              throw new Error('Kayıt başarısız');
+              const errorData = await response.json();
+              if (errorData.detail) {
+                if (Array.isArray(errorData.detail)) {
+                  let errorMessages = errorData.detail.map((error: any) => error.msg).join('\n');
+                  toast({
+                    title: "Kayıt başarısız",
+                    description: errorMessages,
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                } else {
+                  toast({
+                    title: "Kayıt başarısız",
+                    description: errorData.detail,
+                    status: "error",
+                    duration: 3000,
+                    isClosable: true,
+                  });
+                }
+              } else {
+                throw new Error('Kayıt başarısız');
+              }
             }
           } catch (error) {
             toast({
