@@ -154,6 +154,18 @@ function DashboardLayout() {
             }
             const routeTo = `/${pathnames.slice(0, index + 1).join("/")}`;
             const isLast = index === pathnames.length - 1;
+
+            // Türkçe çeviriler için bir nesne oluşturuyoruz
+            const translations: { [key: string]: string } = {
+                profile: "Profil",
+                settings: "Ayarlar",
+                // ... other translations ...
+            };
+
+            // Eğer çeviri varsa onu kullan, yoksa kelimenin ilk harfini büyük yap
+            const displayName = translations[name.toLowerCase()] || 
+                (name.charAt(0).toUpperCase() + name.slice(1));
+
             return (
                 <BreadcrumbItem key={name} isCurrentPage={isLast}>
                     <BreadcrumbLink 
@@ -167,7 +179,7 @@ function DashboardLayout() {
                             fontWeight: "bold"
                         }}
                     >
-                        {name.charAt(0).toUpperCase() + name.slice(1)}
+                        {displayName}
                     </BreadcrumbLink>
                 </BreadcrumbItem>
             );
