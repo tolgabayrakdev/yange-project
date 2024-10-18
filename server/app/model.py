@@ -21,9 +21,6 @@ class User(Base):
         DateTime, default=datetime.now(), onupdate=datetime.now()
     )
 
-    def __repr__(self):
-        return f"<User(id={self.id}, username={self.username}, email={self.email})>"
-
 
 class Role(Base):
     __tablename__ = "roles"
@@ -35,7 +32,4 @@ class Role(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=datetime.now(), onupdate=datetime.now()
     )
-
-    def __repr__(self):
-        return f"<Role(id={self.id}, name={self.name})>"
 
